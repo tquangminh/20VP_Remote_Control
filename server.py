@@ -10,13 +10,28 @@ import os
 import pyautogui
 import io
 import keyboard
+from requests import request
 
 def threaded_client(con, addr):
     while True: 
         req = con.recv(1024).decode("utf8")
-        if req == "processList": 
-            output = os.popen('wmic process get description, processid').read()
-            con.sendall(output.encode("utf8)"))
+        if req == 'process':
+            con.sendall("Receveid request".encode('utf8'))
+            while True:
+                req = con.recv(1024).decode("utf8")
+                if req == "processList": 
+                    output = os.popen('wmic process get description, processid, threadcount/FORMAT:csv').read()
+                    con.sendall(output.encode("utf8)"))
+                if req == "kill":
+                    con.sendall("Receive Request".encode('utf8'))
+                    pId = con.recv(1024).decode('utf8')
+                    os.popen('taskkill /F /PID ' + pId)
+                    con.sendall("Kill process".encode('utf8'))
+                if req == "start":
+                    con.sendall("Receive Request".encode('utf8'))
+                    name = con.recv(1024).decode('utf8')
+                    os.popen('start ' + name)
+                    con.sendall("start process".encode('utf8'))
         if req == "appList":
             output = os.popen('powershell "gps | where {$_.MainWindowTitle } | select processName, Id').read()
             con.sendall(output.encode("utf8)"))
