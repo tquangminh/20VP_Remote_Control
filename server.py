@@ -17,34 +17,47 @@ def threaded_client(con, addr):
         req = con.recv(1024).decode("utf8")
         if req == 'process':
             con.sendall("Receveid request".encode('utf8'))
+
             while True:
                 req = con.recv(1024).decode("utf8")
                 if req == "processList": 
-                    output = os.popen('wmic process get description, processid, threadcount/FORMAT:csv').read()
+                    output = os.popen('powershell \"gps | select ProcessName, Id, @{Name=\'ThreadCount\';Expression ={$_.Threads.Count}} | ConvertTo-Csv').read()
                     con.sendall(output.encode("utf8)"))
-                if req == "kill":
+                elif req == "kill":
                     con.sendall("Receive Request".encode('utf8'))
                     pId = con.recv(1024).decode('utf8')
                     os.popen('taskkill /F /PID ' + pId)
                     con.sendall("Kill process".encode('utf8'))
-                if req == "start":
+                elif req == "start":
                     con.sendall("Receive Request".encode('utf8'))
                     name = con.recv(1024).decode('utf8')
                     os.popen('start ' + name)
                     con.sendall("start process".encode('utf8'))
-        if req == "appList":
-            output = os.popen('powershell "gps | where {$_.MainWindowTitle } | select processName, Id').read()
-            con.sendall(output.encode("utf8)"))
-        if req == "kill":
-            con.sendall("Receive Request".encode('utf8'))
-            pId = con.recv(1024).decode('utf8')
-            os.popen('taskkill /F /PID ' + pId)
-            con.sendall("Kill process".encode('utf8'))
-        if req == "start":
-            con.sendall("Receive Request".encode('utf8'))
-            name = con.recv(1024).decode('utf8')
-            os.popen('start ' + name)
-            con.sendall("start process".encode('utf8'))
+                if req == 'process closing':
+                    con.sendall('Received request'.encode('utf8'))
+                    break
+        if req == 'app':
+            con.sendall("Receveid request".encode('utf8'))
+
+            while True:
+                req = con.recv(1024).decode("utf8")
+                if req == "appList": 
+                    output = os.popen('powershell \"gps | where {$_.MainWindowTitle } | select ProcessName, Id, @{Name=\'ThreadCount\';Expression ={$_.Threads.Count}} | ConvertTo-Csv').read()
+                    con.sendall(output.encode("utf8)"))
+                elif req == "kill":
+                    con.sendall("Receive Request".encode('utf8'))
+                    pId = con.recv(1024).decode('utf8')
+                    os.popen('taskkill /F /PID ' + pId)
+                    con.sendall("Kill app".encode('utf8'))
+                elif req == "start":
+                    con.sendall("Receive Request".encode('utf8'))
+                    name = con.recv(1024).decode('utf8')
+                    os.popen('start ' + name)
+                    con.sendall("start app".encode('utf8'))
+                if req == 'app closing':
+                    con.sendall('Received request'.encode('utf8'))
+                    break
+
         if req == "printScreen":
             img = pyautogui.screenshot()
             img_byte_arr = io.BytesIO()
