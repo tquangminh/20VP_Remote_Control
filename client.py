@@ -1,21 +1,12 @@
-import imp
-from importlib.resources import path
+import io, os,sys, socket, csv
+
+import tkinter as tk
 from tkinter import *
-from tkinter import ttk
-from tkinter import messagebox
-from tkinter import filedialog
-from tkinter import font as tkFont
+from tkinter import Tk, ttk, messagebox , filedialog, font as tkFont
+from tkinter.ttk import *
 from tkinter.filedialog import askopenfile
 from PIL import ImageTk, Image  
-import socket
-import os,sys
-import io
-import tkinter as tk
 
-import socket
-import csv
-
-from sklearn.metrics import top_k_accuracy_score
 global HOST, PORT
 
 window = Tk()
@@ -316,6 +307,7 @@ def printScr():
         img = ImageTk.PhotoImage(imageresize)
         panel = Label(prt_canvas, image = img, relief = GROOVE)
         panel.place(x = 30, y = 30)
+        panel.mainloop()
     
     def saveImg():
         with open('screenshot.jpg', "wb") as f:
@@ -326,8 +318,8 @@ def printScr():
 
     saveBtn = Button(prt_canvas, text="Lưu",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= saveImg)
     saveBtn.place(x=280, y=315, height=40, width=230)
-    win1.mainloop()
     prt_canvas.mainloop()
+    win1.mainloop()
 
 def keystroke():
     req = 'keystroke'

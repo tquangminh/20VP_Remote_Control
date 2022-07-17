@@ -1,16 +1,8 @@
-import socket
-import tkinter
-from tkinter import *
-from tkinter import ttk
+import socket, threading
+from tkinter import Tk, ttk, messagebox 
 from tkinter.ttk import *
-from tkinter import messagebox 
-import threading
-import sys
-import os
-import pyautogui
-import io
-import keyboard
-from requests import request
+import sys, os, io
+import pyautogui, keyboard
 
 def threaded_client(con, addr):
     while True: 
@@ -64,6 +56,7 @@ def threaded_client(con, addr):
             img.save(img_byte_arr, format='PNG')
             img_byte_arr = img_byte_arr.getvalue()
             con.sendall(img_byte_arr)
+
         if req == "keystroke":
             con.sendall("receveived Request".encode("utf8"))
             req = con.recv(1024).decode("utf8")
