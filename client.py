@@ -1,9 +1,8 @@
 import io, os,sys, socket, csv
 
-import tkinter as tk
 from tkinter import *
+import tkinter as tk
 from tkinter import Tk, ttk, messagebox , filedialog, font as tkFont
-from tkinter.ttk import *
 from tkinter.filedialog import askopenfile
 from PIL import ImageTk, Image  
 
