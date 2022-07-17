@@ -6,6 +6,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import font as tkFont
 from tkinter.filedialog import askopenfile
+from PIL import ImageTk, Image  
 import socket
 import os,sys
 import io
@@ -15,7 +16,6 @@ import socket
 import csv
 
 from sklearn.metrics import top_k_accuracy_score
-
 global HOST, PORT
 
 window = Tk()
@@ -293,12 +293,41 @@ def app():
         
     win.mainloop()
 
-def printScr():
-    cli.sendall('printScreen'.encode("utf8"))
-    image = cli.recv(500000)   
-    # writing it to the disk using opencv
-    with open('screenshot.jpg', "wb") as f:
-        f.write(image) 
+def printScr():  
+    win1 = Toplevel(window)
+    prt_canvas = Canvas(win1,
+    bg = "#ffffff",
+    height = 400,
+    width = 550,
+    bd = 0,
+    highlightthickness = 0,
+    relief = "ridge")
+
+    prt_canvas.pack(fill = "both", expand = True) 
+
+    Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
+
+    def prt():
+        global imgbyte
+        cli.sendall('printScreen'.encode("utf8"))
+        imgbyte = cli.recv(500000)   
+        image = Image.open(io.BytesIO(imgbyte))
+        imageresize  = image.resize((480, 270),Image.Resampling.LANCZOS)
+        img = ImageTk.PhotoImage(imageresize)
+        panel = Label(prt_canvas, image = img, relief = GROOVE)
+        panel.place(x = 30, y = 30)
+    
+    def saveImg():
+        with open('screenshot.jpg', "wb") as f:
+            f.write(imgbyte) 
+    
+    PrtScBtn = Button(prt_canvas, text="Chụp",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= prt)
+    PrtScBtn.place(x=30, y=315, height=40, width = 230)
+
+    saveBtn = Button(prt_canvas, text="Lưu",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= saveImg)
+    saveBtn.place(x=280, y=315, height=40, width=230)
+    win1.mainloop()
+    prt_canvas.mainloop()
 
 def keystroke():
     req = 'keystroke'
