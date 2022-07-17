@@ -6,6 +6,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import font as tkFont
 from tkinter.filedialog import askopenfile
+from PIL import ImageTk, Image  
 import socket
 import os,sys
 import io
@@ -35,7 +36,7 @@ Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
 
 Fira_Sans10 = tkFont.Font(family='Fira Sans', size=10, weight=tkFont.BOLD)
 
-def create(): 
+def process(): 
     win = Toplevel(window)
 
     my_canvas = Canvas(win,
@@ -125,26 +126,59 @@ def create():
     count=0
 
     for record in data:
-	    if count % 2 == 0:
-		    my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2]), tags=('evenrow',))
-	    else:
-		    my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2]), tags=('oddrow',))
+        if count % 2 == 0:
+            my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2]), tags=('evenrow',))
+        else:
+            my_tree.insert(parent='', index='end', iid=count, text="", values=(record[0], record[1], record[2]), tags=('oddrow',))
 
-	    count += 1
+        count += 1
 
+
+def prtsc(): 
+    win1 = Toplevel(window)
+
+    prt_canvas = Canvas(win1,
+    bg = "#ffffff",
+    height = 400,
+    width = 550,
+    bd = 0,
+    highlightthickness = 0,
+    relief = "ridge")
+
+    prt_canvas.pack(fill = "both", expand = True) 
+
+
+    Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
+
+
+    image = Image.open(r"C:\Users\Asus\Pictures\Feedback\Untitled.jpg")
+    imageresize  = image.resize((480, 270),Image.Resampling.LANCZOS)
+
+    img = ImageTk.PhotoImage(imageresize)
+    
+    panel = Label(prt_canvas, image = img, relief = GROOVE)
+    
+    panel.place(x = 30, y = 30)
+    PrtScBtn = Button(prt_canvas, text="Chụp",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= NONE)
+    PrtScBtn.place(x=30, y=315, height=40, width = 230)
+
+    saveBtn = Button(prt_canvas, text="Lưu",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= NONE)
+    saveBtn.place(x=280, y=315, height=40, width=230)
+    win1.mainloop()
+    prt_canvas.mainloop()
 def entry_clear_IP(e):
         if ip_entry.get() == "Enter IP":
             ip_entry.delete(0,END)
 
-ip_entry = Entry(frame1, font=("Courier New", 11),fg="#303952",bg = "#ebc6c6", bd=0)
+ip_entry = Entry(can_show, font=("Courier New", 11),fg="#303952",bg = "#ebc6c6", bd=0)
 ip_entry.place(x=20, y=40,width=250,height=25)
 ip_entry.insert(0,"Enter IP")
 ip_entry.bind("<FocusIn>", entry_clear_IP)
 
-ip_btn = Button(frame1, text="Kết nối",font=("Fira", 10,'bold'), fg="#d78e8e",bd=0,command=NONE)
+ip_btn = Button(can_show, text="Kết nối",font=("Fira", 10,'bold'), fg="#d78e8e",bd=0,command=NONE)
 ip_btn.place(x=275,y=40, width = 95)
 
-processBtn = Button(can_show, text="Process Running",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=create, wraplength=80)
+processBtn = Button(can_show, text="Process Running",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=process, wraplength=80)
 
 processBtn.place(x=20, y=90, height=220, width=85)
 
@@ -153,7 +187,7 @@ runBtn = Button(can_show, text="App Running",font=Fira_Sans,borderwidth=0,bg="#6
 runBtn.place(x=110, y=90, height=70, width=160) 
 
 
-prtBtn = Button(can_show, text="Chụp màn hình",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=NONE)
+prtBtn = Button(can_show, text="Chụp màn hình",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=prtsc)
 
 prtBtn.place(x=110, y=165, height=65, width=160)
 
