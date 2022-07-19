@@ -241,8 +241,8 @@ def keyStroke():
     highlightthickness = 0,
     relief = "ridge")
 
+    
     stroke_canvas.pack(fill = "both", expand = True) 
-
 
     Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
 
@@ -263,11 +263,33 @@ def keyStroke():
     if csvTopicList == 'NullTopic':
         csvTopicList = ''
     TopicList = map(str.strip, csvTopicList.split(','))
-    scrollbar = Scrollbar(stroke_canvas)
-    topicListBox = Listbox(stroke_canvas,yscrollcommand = scrollbar.set)
+
+    topicListBox = Listbox(stroke_canvas)
+
+    scrollbarX = Scrollbar(topicListBox,orient = HORIZONTAL)
+    
+    scrollbarY = Scrollbar(topicListBox,orient = VERTICAL)
+
+    topicListBox.configure(yscrollcommand = scrollbarY.set)
+    topicListBox.configure(xscrollcommand=scrollbarX.set)
+    
+   
+
+    scrollbarY.config(command = topicListBox.yview)
+    scrollbarY.pack( side = RIGHT, fill = Y)
+
+    scrollbarX.config(command = topicListBox.xview)
+    scrollbarX.pack( side = BOTTOM, fill = X)
+  
+
     topicListBox.place(x=15, y=100, height=234, width=751)
+    
+
+   
     for i in TopicList:
         topicListBox.insert(END, i)
+        
+    
     win2.mainloop()
     stroke_canvas.mainloop()
 
