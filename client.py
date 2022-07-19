@@ -95,22 +95,81 @@ def process():
             count += 1
 
     def kill():
-        cli.sendall('kill'.encode("utf8"))
-        res = cli.recv(50000).decode("utf8")
-        req = input("Request: ")
-        cli.sendall(req.encode("utf8"))
-        res = cli.recv(1024).decode("utf8")
+        def killf():
+            cli.sendall('kill'.encode("utf8"))
+            res = cli.recv(50000).decode("utf8")
+            pid = pid_entry.get()
+            cli.sendall(pid.encode("utf8"))
+            res = cli.recv(1024).decode("utf8")
+
+        win3 = Toplevel(window)
+        win3.title('Kill')
+        killProcess_canvas = Canvas(win3,
+        bg = "#ffffff",
+        height = 100,
+        width = 360,
+        bd = 0,
+        highlightthickness = 0,
+        relief = "ridge")
+
+        killProcess_canvas.pack(fill = "both", expand = True) 
+        killProcess_canvas.grab_set()
+
+        Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
+        def entry_clear_ID(e):
+            if pid_entry.get() == "Nhập ID":
+                pid_entry.delete(0,END)
+
+        pid_entry = Entry(killProcess_canvas, font=("Courier New", 11),fg="#303952",bg = "#ebc6c6", bd=0)
+        pid_entry.place(x=20, y=40,width=250,height=25)
+        pid_entry.insert(0,"Nhập ID")
+        pid_entry.bind("<FocusIn>", entry_clear_ID)
+
+        killBtn = Button(killProcess_canvas, text="Kill",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command= killf)
+        killBtn.place(x=280, y=40, height=25, width = 60)
+        killProcess_canvas.mainloop()
 
     def delete():
         for item in my_tree.get_children():
             my_tree.delete(item)
 
     def start():
-        cli.sendall('start'.encode("utf8"))
-        cli.recv(1024)
-        req = input("Request: ")
-        cli.sendall(req.encode("utf8"))
-        res = cli.recv(1024).decode("utf8")
+        def startf():
+            cli.sendall('start'.encode("utf8"))
+            cli.recv(1024)
+            appName = name_entry.get()
+            cli.sendall(appName.encode("utf8"))
+            res = cli.recv(1024).decode("utf8")
+
+        win4 = Toplevel(window)
+        win4.title('Start')
+        startProcess_canvas = Canvas(win4,
+        bg = "#ffffff",
+        height = 100,
+        width = 360,
+        bd = 0,
+        highlightthickness = 0,
+        relief = "ridge")
+
+        startProcess_canvas.pack(fill = "both", expand = True) 
+
+        startProcess_canvas.grab_set()
+
+        Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
+        
+        def entry_clear_name(e):
+            if name_entry.get() == "Nhập tên":
+                name_entry.delete(0,END)
+
+        name_entry = Entry(startProcess_canvas, font=("Courier New", 11),fg="#303952",bg = "#ebc6c6", bd=0)
+        name_entry.place(x=20, y=40,width=250,height=25)
+        name_entry.insert(0,"Nhập tên")
+        name_entry.bind("<FocusIn>", entry_clear_name)
+        
+        startBtn = Button(startProcess_canvas, text="Start",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command= startf)
+        startBtn.place(x=280, y=40, height=25, width = 60)
+        startProcess_canvas.mainloop()
+
     
     viewBtn = Button(my_canvas, text="Xem",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= view)
     viewBtn.place(x=210, y=30, height=40, width=175)
@@ -212,22 +271,80 @@ def app():
             count += 1
 
     def kill():
-        cli.sendall('kill'.encode("utf8"))
-        res = cli.recv(50000).decode("utf8")
-        req = input("Request: ")
-        cli.sendall(req.encode("utf8"))
-        res = cli.recv(1024).decode("utf8")
+        def killf():
+            cli.sendall('kill'.encode("utf8"))
+            res = cli.recv(50000).decode("utf8")
+            pid = pid_entry.get()
+            cli.sendall(pid.encode("utf8"))
+            res = cli.recv(1024).decode("utf8")
+
+        win3 = Toplevel(window)
+        win3.title('Kill')
+        killProcess_canvas = Canvas(win3,
+        bg = "#ffffff",
+        height = 100,
+        width = 360,
+        bd = 0,
+        highlightthickness = 0,
+        relief = "ridge")
+
+        killProcess_canvas.pack(fill = "both", expand = True) 
+        killProcess_canvas.grab_set()
+
+        Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
+        def entry_clear_ID(e):
+            if pid_entry.get() == "Nhập ID":
+                pid_entry.delete(0,END)
+
+        pid_entry = Entry(killProcess_canvas, font=("Courier New", 11),fg="#303952",bg = "#ebc6c6", bd=0)
+        pid_entry.place(x=20, y=40,width=250,height=25)
+        pid_entry.insert(0,"Nhập ID")
+        pid_entry.bind("<FocusIn>", entry_clear_ID)
+
+        killBtn = Button(killProcess_canvas, text="Kill",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command= killf)
+        killBtn.place(x=280, y=40, height=25, width = 60)
+        killProcess_canvas.mainloop()
 
     def delete():
         for item in my_tree.get_children():
             my_tree.delete(item)
 
     def start():
-        cli.sendall('start'.encode("utf8"))
-        cli.recv(1024)
-        req = input("Request: ")
-        cli.sendall(req.encode("utf8"))
-        res = cli.recv(1024).decode("utf8")
+        def startf():
+            cli.sendall('start'.encode("utf8"))
+            cli.recv(1024)
+            appName = name_entry.get()
+            cli.sendall(appName.encode("utf8"))
+            res = cli.recv(1024).decode("utf8")
+
+        win4 = Toplevel(window)
+        win4.title('Start')
+        startProcess_canvas = Canvas(win4,
+        bg = "#ffffff",
+        height = 100,
+        width = 360,
+        bd = 0,
+        highlightthickness = 0,
+        relief = "ridge")
+
+        startProcess_canvas.pack(fill = "both", expand = True) 
+
+        startProcess_canvas.grab_set()
+
+        Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
+        
+        def entry_clear_name(e):
+            if name_entry.get() == "Nhập tên":
+                name_entry.delete(0,END)
+
+        name_entry = Entry(startProcess_canvas, font=("Courier New", 11),fg="#303952",bg = "#ebc6c6", bd=0)
+        name_entry.place(x=20, y=40,width=250,height=25)
+        name_entry.insert(0,"Nhập tên")
+        name_entry.bind("<FocusIn>", entry_clear_name)
+        
+        startBtn = Button(startProcess_canvas, text="Start",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command= startf)
+        startBtn.place(x=280, y=40, height=25, width = 60)
+        startProcess_canvas.mainloop()
     
     viewBtn = Button(my_canvas, text="Xem",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= view)
     viewBtn.place(x=210, y=30, height=40, width=175)
@@ -321,22 +438,73 @@ def printScr():
     win1.mainloop()
 
 def keystroke():
-    req = 'keystroke'
-    cli.sendall(req.encode("utf8"))
+    global keystrokeLs
+    keystrokeLs = []
+    cli.sendall('keystroke'.encode("utf8"))
     cli.recv(1024)
-    #hook
-    req = input('request: ')
-    cli.sendall(req.encode("utf8"))
-    cli.recv(1024)
-    #unhook
-    req = input('request: ')
-    cli.sendall(req.encode("utf8"))
-    cli.recv(1024)
-    #view
-    req = input('request: ')
-    cli.sendall(req.encode("utf8"))
-    string = cli.recv(1024).decode('utf8')
-    print(string)
+
+    def hook():
+        cli.sendall('hook'.encode("utf8"))
+        cli.recv(1024)
+    def unhook():
+        global keystrokeLS
+        cli.sendall('unhook'.encode("utf8"))
+        res = cli.recv(1024).decode('utf8')
+        if res == 'nothing hook':
+            return
+        keystrokeLs.append(res)
+    def view():
+        global keystrokeLS
+        for i in keystrokeLs:
+            keystrokeStrListBox.insert(END, i)
+            keystrokeLs.pop(0)
+    def clear():
+        keystrokeStrListBox.delete(first = 0, last = keystrokeStrListBox.size())
+        
+    
+    win2 = Toplevel(window)
+    win2.title('KeyStroke')
+    stroke_canvas = Canvas(win2,
+    bg = "#ffffff",
+    height = 360,
+    width = 810,
+    bd = 0,
+    highlightthickness = 0,
+    relief = "ridge")
+    stroke_canvas.pack(fill = "both", expand = True) 
+    Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
+    scrollbar = Scrollbar(stroke_canvas)
+    keystrokeStrListBox = Listbox(stroke_canvas,yscrollcommand = scrollbar.set)
+    keystrokeStrListBox.place(x=15, y=100, height=234, width=751)
+    scrollbarX = Scrollbar(keystrokeStrListBox,orient = HORIZONTAL)
+    
+    scrollbarY = Scrollbar(keystrokeStrListBox,orient = VERTICAL)
+
+    keystrokeStrListBox.configure(yscrollcommand = scrollbarY.set)
+    keystrokeStrListBox.configure(xscrollcommand=scrollbarX.set)
+    
+   
+
+    scrollbarY.config(command = keystrokeStrListBox.yview)
+    scrollbarY.pack( side = RIGHT, fill = Y)
+
+    scrollbarX.config(command = keystrokeStrListBox.xview)
+    scrollbarX.pack( side = BOTTOM, fill = X)
+
+    hookBtn = Button(stroke_canvas, text="Hook",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= hook)
+    hookBtn.place(x=25, y=30, height=40, width = 175)
+
+    unHookBtn = Button(stroke_canvas, text="Unhook",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= unhook)
+    unHookBtn.place(x=210, y=30, height=40, width=175)
+
+    prBtn = Button(stroke_canvas, text="In phím",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= view)
+    prBtn.place(x=395, y=30, height=40, width=175)
+
+    delBtn = Button(stroke_canvas, text="Xóa",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= clear)
+    delBtn.place(x=580, y=30, height=40, width=175)
+    win2.mainloop()
+
+
 def shutdown():
     cli.sendall('shutdown'.encode("utf8"))
     cli.recv(1024)
