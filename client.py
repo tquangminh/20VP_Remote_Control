@@ -11,7 +11,7 @@ global HOST, PORT
 
 window = Tk()
 window.resizable(False, False) 
-window.title('Process')
+window.title('Remote Control')
 
 style = ttk.Style()
 style.theme_use("clam")
@@ -31,6 +31,7 @@ can_show.pack(fill = "both", expand = True)
 Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
 
 Fira_Sans10 = tkFont.Font(family='Fira Sans', size=10, weight=tkFont.BOLD)
+global cli
 cli = None
 
 def entry_clear_IP(e):
@@ -38,10 +39,13 @@ def entry_clear_IP(e):
         ip_entry.delete(0,END)
 
 def connectSocket():
+    global cli
+    if cli != None:
+        messagebox.showerror('Error', 'Already connect to server')
+        return
     HOST = ip_entry.get()
     PORT = 1239
     try:
-        global cli 
         cli = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         cli.connect((HOST, PORT))
         cli.sendall('Client'.encode("utf8"))
@@ -273,7 +277,7 @@ def app():
     bd = 0,
     highlightthickness = 0,
     relief = "ridge")
-
+    win.title('App')
     my_canvas.pack(fill = "both", expand = True) 
     Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
 
@@ -468,6 +472,7 @@ def printScr():
     bd = 0,
     highlightthickness = 0,
     relief = "ridge")
+    win1.title('Print Scrren')
     win1.grab_set()
     prt_canvas.pack(fill = "both", expand = True) 
 
@@ -477,7 +482,7 @@ def printScr():
     def prt():
         global imgbyte
         cli.sendall('printScreen'.encode("utf8"))
-        imgbyte = cli.recv(500000)   
+        imgbyte = cli.recv(700000)   
         image = Image.open(io.BytesIO(imgbyte))
         imageresize  = image.resize((480, 270),Image.Resampling.LANCZOS)
         img = ImageTk.PhotoImage(imageresize)
@@ -600,6 +605,7 @@ def shutdown():
         messagebox.showerror('Error', "Connect to server first")
         return
     cli.sendall('shutdown'.encode("utf8"))
+    cli.close()
     messagebox.showinfo("Status", 'Shutdown successfully')
 
 def out():
