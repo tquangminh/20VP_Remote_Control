@@ -1,4 +1,3 @@
-from email.mime import message
 import io, os,sys, socket, csv, datetime
 
 from tkinter import *
@@ -18,7 +17,7 @@ style.theme_use("clam")
 txt_cl = "#F5DEB3"
 frame1 = Frame(window)
 frame1.pack()
-  
+
 can_show = Canvas(frame1,
 bg = "#ffffff",
 height = 330,
@@ -29,8 +28,8 @@ relief = "ridge")
 can_show.pack(fill = "both", expand = True)
                 
 Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
-
 Fira_Sans10 = tkFont.Font(family='Fira Sans', size=10, weight=tkFont.BOLD)
+
 global cli
 cli = None
 
@@ -45,6 +44,7 @@ def connectSocket():
         return
     HOST = ip_entry.get()
     PORT = 1239
+    
     try:
         cli = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         cli.connect((HOST, PORT))
@@ -52,7 +52,6 @@ def connectSocket():
         cli.recv(1024)
         messagebox.showinfo('Status', 'Connect to Server successfully') 
         print("Connect to Server successfully")
-
     except:
         cli = None
         messagebox.showerror('Error', "Server has disconnected")
@@ -414,7 +413,6 @@ def app():
     startBtn = Button(my_canvas, text="Start",font=Fira_Sans,borderwidth=2,bg="#63cdda",fg = "#FFFFFF", command= start)
     startBtn.place(x=580, y=30, height=40, width=175)
 
-
     style.configure("Treeview", 
     	background="#D3D3D3",
     	foreground="black",
@@ -479,6 +477,7 @@ def printScr():
     Fira_Sans = tkFont.Font(family='Fira Sans', size=13, weight=tkFont.BOLD)
     global imgbyte
     imgbyte = ''
+
     def prt():
         global imgbyte
         cli.sendall('printScreen'.encode("utf8"))
@@ -521,6 +520,7 @@ def keystroke():
     cli.recv(1024)
     global hookcheck
     hookcheck = 0
+
     def hook():
         global hookcheck
         if hookcheck == 1:
@@ -529,7 +529,7 @@ def keystroke():
         cli.sendall('hook'.encode("utf8"))
         cli.recv(1024)
         hookcheck = 1
-        messagebox.showinfo('status', 'hooked', parent = win2)
+        messagebox.showinfo('status', 'hooked', parent = win2)       
     def unhook():
         global hookcheck
         if hookcheck != 1:
@@ -573,13 +573,11 @@ def keystroke():
     keystrokeStrListBox = Listbox(stroke_canvas,yscrollcommand = scrollbar.set)
     keystrokeStrListBox.place(x=15, y=100, height=234, width=751)
     scrollbarX = Scrollbar(keystrokeStrListBox,orient = HORIZONTAL)
-    
     scrollbarY = Scrollbar(keystrokeStrListBox,orient = VERTICAL)
 
     keystrokeStrListBox.configure(yscrollcommand = scrollbarY.set)
     keystrokeStrListBox.configure(xscrollcommand=scrollbarX.set)
        
-
     scrollbarY.config(command = keystrokeStrListBox.yview)
     scrollbarY.pack( side = RIGHT, fill = Y)
 
@@ -622,30 +620,21 @@ ip_btn = Button(frame1, text="Kết nối",font=("Fira", 10,'bold'), fg="#d78e8e
 ip_btn.place(x=275,y=40, width = 95)
 
 processBtn = Button(can_show, text="Process Running",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=process, wraplength=80)
-
 processBtn.place(x=20, y=90, height=220, width=85)
 
 runBtn = Button(can_show, text="App Running",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=app)
-
 runBtn.place(x=110, y=90, height=70, width=160) 
 
-
 prtBtn = Button(can_show, text="Chụp màn hình",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=printScr)
-
 prtBtn.place(x=110, y=165, height=65, width=160)
 
-
 keyBtn = Button(can_show, text="Keystroke",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=keystroke)
-
 keyBtn.place(x=275, y=90, height=140, width=95)
 
 shutDownBtn = Button(can_show, text="Tắt máy",font=Fira_Sans,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=shutdown)
-
 shutDownBtn.place(x=110, y=235, height=75, width=210)
 
-
 outBtn = Button(can_show, text="Thoát",font=Fira_Sans10,borderwidth=0,bg="#63cdda",fg = "#FFFFFF", command=out)
-
 outBtn.place(x=325, y=235, height=75, width=45)
 
 can_show.mainloop()  

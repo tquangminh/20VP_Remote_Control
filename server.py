@@ -9,7 +9,6 @@ def threaded_client(con, addr):
         req = con.recv(1024).decode("utf8")
         if req == 'process':
             con.sendall("Receveid request".encode('utf8'))
-
             while True:
                 req = con.recv(1024).decode("utf8")
                 if req == "processList": 
@@ -34,7 +33,6 @@ def threaded_client(con, addr):
                     break 
         elif req == 'app':
             con.sendall("Receveid request".encode('utf8'))
-
             while True:
                 req = con.recv(1024).decode("utf8")
                 if req == "appList": 
@@ -57,14 +55,12 @@ def threaded_client(con, addr):
                 if req == 'app closing':
                     con.sendall('Received request'.encode('utf8'))
                     break
-
         elif req == "printScreen":
             img = pyautogui.screenshot()
             img_byte_arr = io.BytesIO()
             img.save(img_byte_arr, format='PNG')
             img_byte_arr = img_byte_arr.getvalue()
             con.sendall(img_byte_arr)
-
         elif req == "keystroke":
             con.sendall("receveived Request".encode("utf8"))
             while True:
@@ -116,7 +112,6 @@ def server_thread():
     if check == 1:
         messagebox.showinfo("Status", "Server has been running")
         return
-
     check = 1
 
     hostname = socket.gethostname()
