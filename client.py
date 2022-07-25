@@ -4,7 +4,7 @@ from tkinter import *
 import tkinter as tk
 from tkinter import Tk, ttk, messagebox , filedialog as fd, font as tkFont
 from tkinter.filedialog import askopenfile
-from PIL import ImageTk, Image  
+from PIL import ImageTk, Image
 
 global HOST, PORT
 
@@ -498,7 +498,7 @@ def printScr():
         if dir == '':
             return
         current_time = str(datetime.datetime.now()).replace(' ','_').replace('.','_').replace(':',"_").replace('-',"_")
-        with open(os.path.basename(dir+'/'+current_time+'.jpg'), "wb") as f:
+        with open((dir+'/'+current_time+'.jpg'), "wb") as f:
             f.write(imgbyte) 
         messagebox.showinfo('Status','Saved', parent = win1)
     
